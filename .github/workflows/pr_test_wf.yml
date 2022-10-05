@@ -1,0 +1,32 @@
+on:
+  pull_request_target:
+    types:
+      - closed
+    branches: 
+      - sammys_main
+
+name: Release new version
+
+jobs:
+  create_release:
+    if: github.event.pull_request.merged == true
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+    - name: Create release
+      id: release
+      run: |
+        echo "${{ github.head_ref }}"
+        echo "Figure out what the latest tag is..."
+        echo "Moving tag to latest commit..."
+        echo "Creating release on tag..."
+        echo "Bump release number..."
+        echo "Create new -dev branch with latest number"
+        echo "Checkout new -dev branch"
+        echo "Replace refs in new dev branch"
+        echo "Mark PR as draft"
+        echo "Check if there are any open PRs on previous dev branch"
+        echo "Move PRs to new branch"
