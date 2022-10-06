@@ -2,7 +2,7 @@ on:
   pull_request_target:
     types:
       - closed
-    branches: 
+    branches:
       - sammys_main
 
 name: Release new version
@@ -13,21 +13,42 @@ jobs:
     defaults:
       run:
         shell: bash
-    runs-on: ubuntu-latest     
+    runs-on: ubuntu-latest
     steps:
     - name: checkout
       uses: actions/checkout@v3
     - name: Create release
       id: release
       run: |
+        echo "Figure out what the latest tag is..."\
+        latest_tag=$(git for-each-ref --sort=creatordate --format '%(refname)' refs/tags | tail -1 | grep -o 'v[0-9]\+.[0-9]\+')
+        last_version=$(grep -o -m 1 '## Version [0-9]\+.[0-9]\+' README.md | grep -o '[0-9]\+.[0-9]\+')
+        previous_version=$(grep -o -m 2 '## Version [0-9]\+.[0-9]\+' README.md | grep -o '[0-9]\+.[0-9]\+' | tail -n1)
         echo "${{ github.head_ref }}"
-        echo "Figure out what the latest tag is..."
+
         echo "Moving tag to latest commit..."
+        git push origin :refs/tags/${latest_tag}
+        git tag -f ${latest_tag}
+        git push --tags
+
         echo "Creating release on tag..."
+        sed -n '/## Version ${last_version}/,/## Version ${previous_version}/p' README.md | sed '1d;$d' > RELEASE_NOTES
+        gh release create ${latest_tag} --notes-file RELEASE_NOTES
+
         echo "Bump release number..."
+        new_dev_version=$(echo ${last_version} + 0.01 | bc)
+
         echo "Create new -dev branch with latest number"
+        new_dev_version_branch="${new_dev_version}-dev"
+        git checkout -b ${new_dev_version_branch}
+        git push --set-upstream origin ${new_dev_version_branch}
+
         echo "Checkout new -dev branch"
         echo "Replace refs in new dev branch"
+        grep -l -r 'ref=${latest_tag}' | xargs sed -i --debug 's|ref=${latest_tag}|ref=${new_dev_version_branch}|g'
+
         echo "Mark PR as draft"
+        gh pr create -B main --head ${new_dev_version_branch} --draft --title "New release version ${new_dev_version}"
+
         echo "Check if there are any open PRs on previous dev branch"
         echo "Move PRs to new branch"
