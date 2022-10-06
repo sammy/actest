@@ -20,11 +20,12 @@ jobs:
     - name: Create release
       id: release
       run: |
-        echo "Figure out what the latest tag is..."\
+        echo "Figure out what the latest tag is..."
         latest_tag=$(git for-each-ref --sort=creatordate --format '%(refname)' refs/tags | tail -1 | grep -o 'v[0-9]\+.[0-9]\+')
         last_version=$(grep -o -m 1 '## Version [0-9]\+.[0-9]\+' README.md | grep -o '[0-9]\+.[0-9]\+')
         previous_version=$(grep -o -m 2 '## Version [0-9]\+.[0-9]\+' README.md | grep -o '[0-9]\+.[0-9]\+' | tail -n1)
-        echo "${{ github.head_ref }}"
+        echo "latest_tag=${latest_tag} | last_version=${last_version} | previous_version=${previous_version}"
+        echo "current_branch=${{ github.head_ref }}"
 
         echo "Moving tag to latest commit..."
         git push origin :refs/tags/${latest_tag}
