@@ -37,9 +37,9 @@ jobs:
         git push --tags
 
         echo "Creating release on tag..."
-        sed -n '/## Version ${last_version}/,/## Version ${previous_version}/p' README.md | sed '1d;$d' > RELEASE_NOTES
+        sed -n "/## Version ${last_version}/,/## Version ${previous_version}/p" README.md | sed '1d;$d' > RELEASE_NOTES
         cat RELEASE_NOTES
-        gh release create ${latest_tag} --notes-file RELEASE_NOTES
+        gh release create ${latest_tag} --notes-file RELEASE_NOTES --title "Version ${latest_tag}"
 
         echo "Bump release number..."
         new_dev_version=$(echo ${last_version} + 0.01 | bc)
