@@ -55,7 +55,7 @@ jobs:
         grep -l -r 'ref=${latest_tag}' | xargs sed -i --debug 's|ref=${latest_tag}|ref=${new_dev_version_branch}|g'
 
         echo "Mark PR as draft"
-        gh pr create -B main --head ${new_dev_version_branch} --draft --title "New release version ${new_dev_version}"
+        gh pr create -B main --head ${new_dev_version_branch} --draft --title "New release version ${new_dev_version}" --body "Development for new release"
 
         echo "Check if there are any open PRs on previous dev branch"
         echo "Move PRs to new branch"
