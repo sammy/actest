@@ -59,3 +59,4 @@ jobs:
 
         echo "Check if there are any open PRs on previous dev branch"
         echo "Move PRs to new branch"
+        gh pr list -B ${{ github.head_ref }}
