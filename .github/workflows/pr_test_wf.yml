@@ -43,6 +43,7 @@ jobs:
 
         echo "Bump release number..."
         new_dev_version=$(echo ${last_version} + 0.01 | bc)
+        echo $new_dev_version
 
         echo "Create new -dev branch with latest number"
         new_dev_version_branch="${new_dev_version}-dev"
