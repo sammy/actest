@@ -39,3 +39,6 @@
 
 ## Version 2.28
 * Dummy tag removed from source tag in the asml-gke-cluster module.
+
+## Version 2.27
+* Dummy tag removed from source tag in the asml-gke-cluster module.
